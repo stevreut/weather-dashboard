@@ -1,0 +1,23 @@
+* {
+    font-family: 'Courier New', Courier, monospace;  /* TODO - tentative/place-holder */
+    background-color: #ede8de;
+    color: #457;
+}
+
+body {
+    margin: 20px;
+}
+
+input {
+    padding: 5px;
+    background: white;
+    color: #4a5c47;
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+button {
+    padding: 5px;
+}
+
+/* Place-holder limited styling likely to be replaced by BootStrap ultimately. */
