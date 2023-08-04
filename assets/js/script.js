@@ -1,3 +1,6 @@
+let OPENWEATHER_API_KEY = '22ffc970721c18909dbc91b7f0c6ba3b';
+
+
 let searchButton = document.querySelector("#search-button");
 
 searchButton.addEventListener("click",handleCitySearch);
