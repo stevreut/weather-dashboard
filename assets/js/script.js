@@ -24,6 +24,7 @@ function testResponse() {  // TODO - temporary
         let k = resp.list[i].main.temp;
         let c = k-273.15;
         let f = c*9.0/5+32;
+        f = Math.floor(f+0.5);
         txt += (f + ' deg F');
         console.log(i + ' : ' + txt);
     }
