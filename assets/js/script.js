@@ -47,9 +47,49 @@ function handleCitySearch(event) {
                 console.log('initial city value = "' + city + '"');
                 city = city.trim();
                 console.log('trimmed city = "' + city + '" with length = ' + city.length);
+                // TODO - temp - pending refinement, call testFormatWeather() just to demo display
+                testFormatWeather(JSON.parse(respJson)); // TODO
             }
         }
     }
+}
+
+function testFormatWeather(resp) {
+    let nextDaysDiv = document.querySelector("#next-days");
+    if (resp === null) {
+        console.log('resp is null');
+    } else {
+        let typ = typeof resp;
+        console.log('type of response = ' + typ);
+        if (typ !== 'object') {
+            console.log('not an object');
+        } else {
+            console.log('is an object (good)');
+            let i = 0;
+            let count = 0;
+            while (count < 5 && i < resp.list.length) {
+                let divElem = document.createElement("div");
+                let datePara = document.createElement("p");
+                datePara.textContent = resp.list[i].dt;
+                divElem.appendChild(datePara);
+                // TODO conditions (later)
+                let degK = resp.list[i].main.temp;
+                let degC = degK-273.15;
+                let degF = degC*1.5+32;
+                degF = Math.floor(degF*10+0.5)/10;  // show 0.1 precision (might not work for < 0)
+                let tempPara = document.createElement("p");
+                tempPara.textContent = degF;
+                divElem.appendChild(tempPara);
+                let humidPara = document.createElement("p");
+                humidPara.textContent = resp.list[i].main.humidity + "%";
+                divElem.appendChild(humidPara);
+                nextDaysDiv.appendChild(divElem);
+                count++;
+                i += 8;
+            }
+        }
+    }
+
 }
 
 // function testFetch () {

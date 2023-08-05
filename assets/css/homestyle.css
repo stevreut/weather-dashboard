@@ -2,6 +2,9 @@
     font-family: 'Courier New', Courier, monospace;  /* TODO - tentative/place-holder */
     background-color: #ede8de;
     color: #457;
+    border-style: solid;
+    border-color: red;
+    border-width: 1px;
 }
 
 body {
@@ -18,6 +21,11 @@ input {
 
 button {
     padding: 5px;
+}
+
+#next-days {
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Place-holder limited styling likely to be replaced by BootStrap ultimately. */
