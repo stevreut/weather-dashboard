@@ -77,9 +77,10 @@ function cityDataFromAPI(cityName) {
     let url = BASE_URL + GEO_API_BRANCH + "?" +
         "q=" + cityName /* TODO */ + "&limit=1" +
         "&appid=" + OPENWEATHER_API_KEY;
-    console.log('geo url = "' + url + '"');
+    let urlEncoded = encodeURI(url);
+    console.log('geo url = "' + urlEncoded + '"');
     return new Promise(function(resolve,reject) {
-        fetch(url)
+        fetch(urlEncoded)
             .then(function(responseJson) {
                 console.log('geo resp raw = ' + responseJson);
                 console.log('type of geo resp raw = ' + typeof responseJson);
