@@ -6,6 +6,7 @@ let searchButton = document.querySelector("#search-button");
 searchButton.addEventListener("click",handleCitySearch);
 
 let resp;
+
 //testResponse();  // TODO - temporary
 
 
@@ -78,13 +79,7 @@ function cityDataFromAPI(cityName) {
     //  null  ??
     //--
     // Construct URL
-    let BASE_URL = 'http://api.openweathermap.org/';
-    let GEO_API_BRANCH = 'geo/1.0/direct';
-    let url = BASE_URL + GEO_API_BRANCH + "?" +
-        "q=" + cityName /* TODO */ + "&limit=1" +
-        "&appid=" + OPENWEATHER_API_KEY;
-    let urlEncoded = encodeURI(url);
-    console.log('geo url = "' + urlEncoded + '"');
+    let url = geoUrlFromCity(cityName);
     return new Promise(function(resolve,reject) {
         fetch(urlEncoded)
             .then(function(responseJson) {
@@ -108,13 +103,18 @@ function cityDataFromAPI(cityName) {
     );
 }
 
+function geoUrlFromCity(city) {
+    let BASE_URL = 'http://api.openweathermap.org/';
+    let GEO_API_BRANCH = 'geo/1.0/direct';
+    let url = BASE_URL + GEO_API_BRANCH + "?" +
+        "q=" + city /* TODO */ + "&limit=1" +
+        "&appid=" + OPENWEATHER_API_KEY;
+    let urlEncoded = encodeURI(url);
+    console.log('geo url = "' + urlEncoded + '"');
+    return urlEncoded;
+}
 
-let testWeatherOutput = null;
-weatherFromCoords(39.97,-75.2);
-
-function weatherFromCoords (lat, lon) {
-    // returns response from weather API as object, or
-    // null
+function weatherUrlFromLatLon(lat,lon) {
     let BASE_URL = 'http://api.openweathermap.org/';
     let GEO_API_BRANCH = 'data/2.5/forecast';
     let url = BASE_URL + GEO_API_BRANCH + "?" +
@@ -122,8 +122,17 @@ function weatherFromCoords (lat, lon) {
         "&appid=" + OPENWEATHER_API_KEY;
     let urlEncoded = encodeURI(url);
     console.log('weather url = "' + urlEncoded + '"');
+    return urlEncoded;
+}
+
+
+let testWeatherOutput = null;
+weatherFromCoords(39.97,-75.2);
+
+function weatherFromCoords (lat, lon) {
+    let url = weatherUrlFromLatLon(lat, lon);
     return new Promise(function(resolve,reject) {
-        fetch(urlEncoded)
+        fetch(url)
             .then(function(responseJson) {
                 console.log('weather resp raw = ' + responseJson);
                 console.log('type of wthr resp raw = ' + typeof responseJson);
