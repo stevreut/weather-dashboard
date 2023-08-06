@@ -69,7 +69,7 @@ function testFormatWeather(resp) {
             while (count < 5 && i < resp.list.length) {
                 let divElem = document.createElement("div");
                 let datePara = document.createElement("p");
-                datePara.textContent = resp.list[i].dt;
+                datePara.textContent = dayjs.unix(resp.list[i].dt).format("YYYY-MM-DD[T]HH:mm");
                 divElem.appendChild(datePara);
                 // TODO conditions (later)
                 let degK = resp.list[i].main.temp;
