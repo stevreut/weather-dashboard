@@ -3,12 +3,27 @@
     background-color: #ede8de;
     color: #457;
     border-style: solid;
-    border-color: red;
+    border-color: #5959fb;
     border-width: 1px;
+    margin: 2px;
+}
+
+header h1 {
+    justify-content: center;
 }
 
 body {
     margin: 20px;
+}
+
+main {
+    display: flex;
+    justify-content: left;
+}
+
+#city-list {
+    display: flex;
+    flex-direction: column;
 }
 
 input {
@@ -23,7 +38,12 @@ button {
     padding: 5px;
 }
 
+#today-forecast {
+    width: 100%;
+}
+
 #next-days {
+    width: 100%;
     display: flex;
     justify-content: space-between;
 }

@@ -5,8 +5,6 @@ let searchButton = document.querySelector("#search-button");
 
 searchButton.addEventListener("click",handleCitySearch);
 
-//testFetch();  // TODO - DELIBERATELY disabled
-
 let resp;
 testResponse();  // TODO - temporary
 
@@ -67,6 +65,7 @@ function testFormatWeather(resp) {
             console.log('is an object (good)');
             let i = 0;
             let count = 0;
+            nextDaysDiv.innerHTML = '';  // reset content before appending children
             while (count < 5 && i < resp.list.length) {
                 let divElem = document.createElement("div");
                 let datePara = document.createElement("p");
@@ -74,8 +73,8 @@ function testFormatWeather(resp) {
                 divElem.appendChild(datePara);
                 // TODO conditions (later)
                 let degK = resp.list[i].main.temp;
-                let degC = degK-273.15;
-                let degF = degC*1.5+32;
+                let degC = degK-273.15;  // convert Kelvin to Celsius
+                let degF = degC*1.5+32;  // convert Celsius to Fahrenheit
                 degF = Math.floor(degF*10+0.5)/10;  // show 0.1 precision (might not work for < 0)
                 let tempPara = document.createElement("p");
                 tempPara.textContent = degF;
@@ -91,30 +90,3 @@ function testFormatWeather(resp) {
     }
 
 }
-
-// function testFetch () {
-//     // temporary test code to produce a sample of data returned from API for Phila.
-//     let baseUrl = 'https://api.openweathermap.org/';
-//     let urlSuffix = 'data/2.5/forecast';
-//     let lat = '39.97';
-//     let lon = '-75.20';
-//     let fullUrl = baseUrl + urlSuffix + '?' + 
-//         'lat=' + lat + '&lon=' + lon + '&appid=' + OPENWEATHER_API_KEY;
-//     console.log('full URL = "' + fullUrl + '"');
-//     fetch(fullUrl) 
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log('data = ' + data);
-//             return data;
-//         })
-//         .then(data_obj => {
-//             let str = JSON.stringify(data_obj);
-//             localStorage.setItem('phila-test-weather',str);
-//             let myWindow = window.open("","","width=500,height=300");
-//             let doc = myWindow.document;
-//             doc.writeln('<html><head><title>temp</title></head>');
-//             doc.writeln('<body><pre>');
-//             doc.writeln(str);
-//             doc.writeln('</pre></body></html>');
-//         });
-// }
