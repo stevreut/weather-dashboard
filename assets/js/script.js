@@ -53,13 +53,19 @@ function handleCitySearch(event) {
                 // } else {
                 //     console.log('city returned from geo = ' + cityData);
                 // }
-                cityDataFromAPI(city)
+                if (city.length !== 0) {
+                    cityDataFromAPI(city)
                     .then(function(cityData) {
                         console.log('city data after API return = ' + cityData);
                     })
                     .catch(function(arg) {
-
+                        console.log('caught something here');
+                        console.log('caught arg = ' + arg);
                     });
+                } else {
+                    console.log('no search done on blank city');
+                    // TODO - need some kind of error response here
+                }
             }
         }
     }
@@ -102,6 +108,40 @@ function cityDataFromAPI(cityName) {
     );
 }
 
+
+let testWeatherOutput = null;
+weatherFromCoords(39.97,-75.2);
+
+function weatherFromCoords (lat, lon) {
+    // returns response from weather API as object, or
+    // null
+    let BASE_URL = 'http://api.openweathermap.org/';
+    let GEO_API_BRANCH = 'data/2.5/forecast';
+    let url = BASE_URL + GEO_API_BRANCH + "?" +
+        "lat=" + lat + "&lon=" + lon + 
+        "&appid=" + OPENWEATHER_API_KEY;
+    let urlEncoded = encodeURI(url);
+    console.log('weather url = "' + urlEncoded + '"');
+    return new Promise(function(resolve,reject) {
+        fetch(urlEncoded)
+            .then(function(responseJson) {
+                console.log('weather resp raw = ' + responseJson);
+                console.log('type of wthr resp raw = ' + typeof responseJson);
+                return responseJson.json();
+            })
+            .then(function (respObj) {
+                console.log('weather resp obj = ' + respObj);
+                console.log('type of weather resp conv = ' + typeof respObj);
+                testWeatherOutput = respObj;
+                console.log('testWeatherOutput set');
+            }).catch(function(arg) {
+                console.log('weather catch arg = ' + arg);
+                console.log('weather catch clause');
+            })
+        }
+    );
+}
+
 function testFormatWeather(resp) {
     let nextDaysDiv = document.querySelector("#next-days");
     if (resp === null) {
@@ -138,5 +178,4 @@ function testFormatWeather(resp) {
             }
         }
     }
-
 }
