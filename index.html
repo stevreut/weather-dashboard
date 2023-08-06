@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous" -->
     <link rel="stylesheet" href="./assets/css/homestyle.css">
+    </html>
+
     <title>Weather Dashboard</title>
 </head>
 
@@ -13,13 +16,13 @@
         <h1>Weather Dashboard</h1>
     </header>
     <main>
-        <div> <!-- left column -->
-            <div> <!-- Search box and related button -->
+        <div class="container"> <!-- left column -->
+            <div class="container"> <!-- Search box and related button -->
                 <h2>Search for a City:</h2> <!-- TODO - should this be a label instead? -->
                 <input type="text" id="search-city" /> <!-- TODO - leave sizing, etc. to CSS? -->
                 <button id="search-button">Search</button>
             </div>
-            <div id="city-list">
+            <div id="city-list" class="container">
                 <!-- dynamically created city buttons here -->
                 <!-- TODO - place-holder buttons - ONLY for testing -->
                 <button class="hist-button" data-idx="0">Atlanta</button>
@@ -27,22 +30,23 @@
                 <button class="hist-button" data-idx="2">Philadelphia</button>
             </div>
         </div>
-        <div> <!-- right column -->
+        <div class="container"> <!-- right column -->
             <!-- TODO - Consideration of INITIAL page presentation is needed, for before any
                 weather info has been displayed -->
-            <div id="today-forecast">
+            <div id="today-forecast" class="container">
                 <h3 id="city-date">City</h3>
                 <img id="today-icon" src="https://placehold.co/25/ff0/08f.png">
                 <p id="today-temp">75&deg; F</p>
                 <p id="today-wind">10 mph</p>
                 <p id="today-humidity">60%</p>
             </div>
-            <div id="next-days">
+            <div id="next-days" class="container">
                 <!-- dynamically created forecast cards -->
             </div>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <!-- script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script -->
     <script src="./misc/sample_json_resp.js"></script>
     <script src="./assets/js/script.js"></script>
 </body>

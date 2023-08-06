@@ -1,5 +1,5 @@
 * {
-    font-family: 'Courier New', Courier, monospace;  /* TODO - tentative/place-holder */
+    font-family: 'Courier New', Courier, monospace;
     background-color: #ede8de;
     color: #457;
     border-style: solid;
@@ -48,4 +48,3 @@ button {
     justify-content: space-between;
 }
 
-/* Place-holder limited styling likely to be replaced by BootStrap ultimately. */
