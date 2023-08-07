@@ -177,7 +177,7 @@ function displayWeatherInfo(city, resp) {
     }
     // todayForecast.innerHTML = '';
     document.querySelector("#city-date").textContent = 
-        city + ' (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
+        city + ' (' + dayjs.unix(resp.list[0].dt).format("M/D/YYYY") + ')';
     document.querySelector("#today-temp").textContent =
         'Temp: ' + kelvinAsFahrenheit(resp.list[0].main.temp) + "\u00B0 F";
     document.querySelector("#today-wind").textContent =
@@ -204,8 +204,8 @@ function formatCard(resp, idx) {
     let divElem = document.createElement("div");
     let datePara = document.createElement("p");
     console.log('unix = ' + resp.list[idx].dt);
-    console.log('txt of unix = ' + dayjs.unix(resp.list[idx].dt).format('M/d/YYYY'));
-    datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/d/YYYY");
+    console.log('txt of unix = ' + dayjs.unix(resp.list[idx].dt).format('M/D/YYYY'));
+    datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/D/YYYY");
     divElem.appendChild(datePara);
     let img = document.createElement("img");
     img.setAttribute("src","https://openweathermap.org/img/wn/" + resp.list[idx].weather[0].icon + ".png");
