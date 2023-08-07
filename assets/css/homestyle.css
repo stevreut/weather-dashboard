@@ -105,3 +105,19 @@ button {
     margin: 5px 0px 5px 0px;
 }
 
+@media screen and (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+    main>div {
+        margin-right: 20px;
+    }
+    #next-days {
+        flex-direction: column;
+    }
+    #today-forecast {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+
