@@ -4,6 +4,8 @@ let OPENWEATHER_API_KEY = '22ffc970721c18909dbc91b7f0c6ba3b';
 let searchButton = document.querySelector("#search-button");
 searchButton.addEventListener("click",handleCitySearch);
 
+let searchCity = document.querySelector("#search-city");
+
 let cityList = document.querySelector("#city-list");
 cityList.addEventListener("click",handleHistSelect);
 
@@ -56,15 +58,18 @@ function handleCitySearch(event) {
     } else {
         console.log('click on button search button');
         let elem = event.target;
+        removeWarnings();
         if (!elem.matches("button") || !elem.matches("#search-button")) {
             console.log('bad match on search button event');
         } else {
             console.log('search button click even trapped');
-            let city = document.querySelector("#search-city").value;
+            let city = searchCity.value;
             lookupCityAndDisplay(city);
         }
     }
 }
+
+let tempASDF = null;
 
 function lookupCityAndDisplay(city) {
     if (city === null) {
@@ -79,12 +84,37 @@ function lookupCityAndDisplay(city) {
                 .then(function (response) {
                     if (response.ok) {
                         response.json().then(function (data) {
-                            let cityName = data[0].name;
-                            let lat = data[0].lat;
-                            let lon = data[0].lon;
-                            console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
-                            getWeatherAndDisplay (cityName, lat, lon);
-                            addHistButton(cityName, lat, lon);
+                            if (data === null) {
+                                console.log('asdf data is null');
+                            } else if (typeof data === 'undefined') {
+                                console.log('asdf data is undefined');
+                            } else {
+                                console.log('asdf type of data = ' + typeof data);
+                                let asdfvar = JSON.stringify(data);
+                                console.log('asdf data json\'ed = ' + asdfvar);
+                                console.log('asdf data ' + data);
+                                tempASDF = data;
+                                console.log('asdf data len = ' + data.length);
+                            }
+                            if (data.length > 0) {
+                                let cityName = data[0].name;
+                                let lat = data[0].lat;
+                                let lon = data[0].lon;
+                                console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
+                                getWeatherAndDisplay (cityName, lat, lon);
+                                addHistButton(cityName, lat, lon);
+                            } else {
+                                let cityH2 = document.querySelector("#city-date");
+                                cityH2.textContent = "No information found for " + city;
+                                cityH2.setAttribute("class","warning-alert");
+                                cityH2.parentElement.setAttribute("class","warning-alert");
+                                document.querySelector("#today-icon").style.visibility = 'hidden';
+                                document.querySelector("#today-temp").style.visibility = 'hidden';
+                                document.querySelector("#today-wind").style.visibility = 'hidden';
+                                document.querySelector("#today-humidity").style.visibility = 'hidden';
+                                nextDaysDiv.innerHTML = '';
+                                searchCity.value = '';
+                            }
                         });
                     } else {
                         alert('Error: ' + response.statusText);
@@ -136,6 +166,7 @@ function handleHistSelect(event) {
             console.log('bad match on hist button event');
         } else {
             console.log('hist button click even trapped');
+            removeWarnings();
             let city = elem.textContent;
             console.log('hist button city = ' + city);
             if (city !== null) {
@@ -150,11 +181,21 @@ function handleHistSelect(event) {
                 }
                 console.log ('will get display for hist ' + city + ', ' + lat + ', ' + lon);
                 getWeatherAndDisplay (city, lat, lon);
-                document.querySelector("#search-city").value = '';
             }
+            searchCity.value = '';
         }
     }
 
+}
+
+function removeWarnings() {
+    let cityH2 = document.querySelector("#city-date");
+    cityH2.classList.remove("warning-alert");
+    cityH2.parentElement.classList.remove("warning-alert");
+    document.querySelector("#today-icon").style.visibility = 'visible';
+    document.querySelector("#today-temp").style.visibility = 'visible';
+    document.querySelector("#today-wind").style.visibility = 'visible';
+    document.querySelector("#today-humidity").style.visibility = 'visible';
 }
 
 function getWeatherAndDisplay (city, lat, lon) {

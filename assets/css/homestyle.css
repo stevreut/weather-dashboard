@@ -82,6 +82,11 @@ button {
     padding: 5px;
 }
 
+.warning-alert {
+    background-color: #ffde21;
+    font-size: 24pt;
+}
+
 #next-days {
     width: 100%;
     display: flex;
