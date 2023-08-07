@@ -1,22 +1,30 @@
 * {
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #ede8de;
-    color: #457;
-    border-style: solid;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    color: black;
+    /* border-style: solid;
     border-color: #5959fb;
     border-width: 1px;
-    margin: 2px;
+    margin: 2px; */
 }
 
+/* header {
+    background-color: blue;
+} */
+
 header h1 {
+    background-color: #38398a;
+    color: white;
     text-align: center;
 }
 
 body {
-    margin: 20px;
+    width: 100%;
+    margin: 0px;
 }
 
 main {
+    margin: 10px;
     display: flex;
     justify-content: left;
 }
@@ -27,15 +35,27 @@ main {
 }
 
 input {
-    padding: 5px;
-    background: white;
-    color: #4a5c47;
-    font-size: 15pt;
-    font-weight: bold;
+    color: #888;
+    padding: 6px;
+    /* font-size: 15pt; */
+    margin: 5px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: black;
+    border-width: 1px;
 }
 
 button {
     padding: 5px;
+    margin: 6px;
+    background-color: #adadad;
+    border: none;
+    border-radius: 5px;
+}
+
+#search-button {
+    background-color: #718fdc;
+    color: #e2e2e2;
 }
 
 #today-forecast {
