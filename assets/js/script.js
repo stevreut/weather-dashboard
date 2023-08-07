@@ -10,6 +10,28 @@ cityList.addEventListener("click",handleHistSelect);
 let todayForecast = document.querySelector("#today-forecast");
 let nextDaysDiv = document.querySelector("#next-days");
 
+let weatherHistory = [];
+
+loadHistory();
+
+function loadHistory() {
+    weatherHistory = localStorage.getItem("weather-db-hist");
+    if (weatherHistory === null) {
+        weatherHistory = [];
+    } else {
+        weatherHistory = JSON.parse(weatherHistory);
+    }
+    cityList.innerHTML = '';
+    for (let idx=0;idx<weatherHistory.length;idx++) {
+        let histButton = document.createElement("button");
+        histButton.setAttribute("class","hist-button");
+        histButton.setAttribute("lat",weatherHistory[idx].lat);
+        histButton.setAttribute("lon",weatherHistory[idx].lon);
+        histButton.textContent = weatherHistory[idx].city;
+        cityList.appendChild(histButton);
+    }
+}
+
 function kelvinAsFahrenheit(k) {
     let c = k-273.15;
     let f = c*1.8+32;
@@ -51,6 +73,7 @@ function handleCitySearch(event) {
                                     let lon = data[0].lon;
                                     console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
                                     getWeatherAndDisplay (cityName, lat, lon);
+                                    addHistButton(cityName, lat, lon);
                                 });
                             } else {
                                 alert('Error: ' + response.statusText);
@@ -65,6 +88,32 @@ function handleCitySearch(event) {
                 }
             }
         }
+    }
+}
+
+function addHistButton(city, lat, lon) {
+    console.log('adding button for ' + city + ', ' + lat + ', ' + lon);
+    let matchFound = false;
+    let matchIdx = -1;
+    for (let i=0;i<weatherHistory.length;i++) {
+        if (city === weatherHistory[i].city) {
+            matchFound = true;
+            matchIdx = idx;
+        }
+    }
+    if (matchFound) {
+        weatherHistory = weatherHistory.splice(matchIdx, 1);
+    }
+    weatherHistory.unshift({city: city, lat: lat, lon: lon})
+    localStorage.setItem("weather-db-hist", JSON.stringify(weatherHistory));
+    cityList.innerHTML = '';
+    for (let idx=0;idx<weatherHistory.length;idx++) {
+        let histButton = document.createElement("button");
+        histButton.setAttribute("class","hist-button");
+        histButton.setAttribute("lat",weatherHistory[idx].lat);
+        histButton.setAttribute("lon",weatherHistory[idx].lon);
+        histButton.textContent = weatherHistory[idx].city;
+        cityList.appendChild(histButton);
     }
 }
 
