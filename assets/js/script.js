@@ -124,7 +124,7 @@ function displayWeatherInfo(resp) {
         // TODO conditions (later)
         let degK = resp.list[i].main.temp;
         let degC = degK - 273.15;  // convert Kelvin to Celsius
-        let degF = degC * 1.5 + 32;  // convert Celsius to Fahrenheit
+        let degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
         degF = Math.floor(degF * 10 + 0.5) / 10;  // show 0.1 precision (might not work for < 0)
         let tempPara = document.createElement("p");
         tempPara.textContent = degF;
