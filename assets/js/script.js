@@ -203,6 +203,8 @@ function displayWeatherInfo(city, resp) {
 function formatCard(resp, idx) {
     let divElem = document.createElement("div");
     let datePara = document.createElement("p");
+    console.log('unix = ' + resp.list[idx].dt);
+    console.log('txt of unix = ' + dayjs.unix(resp.list[idx].dt).format('M/d/YYYY'));
     datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/d/YYYY");
     divElem.appendChild(datePara);
     let img = document.createElement("img");
