@@ -2,16 +2,26 @@ let OPENWEATHER_API_KEY = '22ffc970721c18909dbc91b7f0c6ba3b';
 
 
 let searchButton = document.querySelector("#search-button");
-
 searchButton.addEventListener("click",handleCitySearch);
 
 let cityList = document.querySelector("#city-list");
+cityList.addEventListener("click",handleHistSelect);
 
 let todayForecast = document.querySelector("#today-forecast");
 let nextDaysDiv = document.querySelector("#next-days");
 
+function kelvinAsFahrenheit(k) {
+    let c = k-273.15;
+    let f = c*1.8+32;
+    f = Math.floor(f*10+0.5)/10;
+    return f.toFixed(1);
+}
 
-cityList.addEventListener("click",handleHistSelect);
+function msAsMph(ms) {
+    let mph = ms*3600/1609.344;
+    mph = Math.floor(mph*10+0.5)/10;
+    return mph.toFixed(1);
+}
 
 function handleCitySearch(event) {
     if (event === null) {
@@ -95,7 +105,7 @@ function getWeatherAndDisplay (city, lat, lon) {
         if (response.ok) {
             response.json().then(function (data) {
                 console.log('weather received : ' + JSON.stringify(data));
-                displayWeatherInfo(data);
+                displayWeatherInfo(city, data);
             });
         } else {
             alert('Error: ' + response.statusText);
@@ -106,7 +116,7 @@ function getWeatherAndDisplay (city, lat, lon) {
     });
 }
 
-function displayWeatherInfo(resp) {
+function displayWeatherInfo(city, resp) {
     console.log('reported item count = ' + resp.cnt);
     console.log('actual item count = ' + resp.list.length);
     let minCount = resp.cnt;
@@ -115,45 +125,43 @@ function displayWeatherInfo(resp) {
     }
     todayForecast.innerHTML = '';
     h3Elem = document.createElement("h3");
-    h3Elem.textContent = 'CITY (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
+    h3Elem.textContent = city + ' (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
     todayForecast.appendChild(h3Elem);
-    let degK = resp.list[0].main.temp;
-    let degC = degK - 273.15;  // convert Kelvin to Celsius
-    let degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
-    degF = Math.floor(degF * 10 + 0.5) / 10;  // show 0.1 precision (might not work for < 0)
     let todayTempPara = document.createElement("p");
-    todayTempPara.textContent = degF + "&deg; F";
+    todayTempPara.textContent = 'Temp: ' + kelvinAsFahrenheit(resp.list[0].main.temp) + "\u00B0 F";
     todayForecast.appendChild(todayTempPara);
     todayWind = document.createElement("p");
-    let wind = resp.list[0].wind.speed;
-    wind *= (3600/1609.344);  // convert to mph
-    wind = Math.floor(wind*10+0.5)/10;  // round to 0.1 mph precision
-    todayWind.textContent = wind;
+    todayWind.textContent = 'Wind: ' + msAsMph(resp.list[0].wind.speed) + " mph";
     todayForecast.appendChild(todayWind);
+    todayHumidPara = document.createElement("p");
+    todayHumidPara.textContent = 'Humidity: ' + resp.list[0].main.humidity + '%';
+    todayForecast.appendChild(todayHumidPara);
     console.log('min count = ' + minCount);
     nextDaysDiv.innerHTML = '';  // reset content before appending children
     let count = 0;
-    let i = 8;  // TODO
+    let i = 7;  // TODO
     while (count < 5 && i < minCount) {
-        let divElem = document.createElement("div");
-        let datePara = document.createElement("p");
-        datePara.textContent = dayjs.unix(resp.list[i].dt).format("YYYY-MM-DD[T]HH:mm");
-        divElem.appendChild(datePara);
-        // TODO conditions (later)
-        degK = resp.list[i].main.temp;
-        degC = degK - 273.15;  // convert Kelvin to Celsius
-        degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
-        degF = Math.floor(degF * 10 + 0.5) / 10;  // show 0.1 precision (might not work for < 0)
-        let tempPara = document.createElement("p");
-        tempPara.textContent = degF;
-        divElem.appendChild(tempPara);
-        let humidPara = document.createElement("p");
-        humidPara.textContent = resp.list[i].main.humidity + "%";
-        divElem.appendChild(humidPara);
-        nextDaysDiv.appendChild(divElem);
+        formatCard(resp, i);
         i += 8;
         count++;
     }
+}
+
+function formatCard(resp, idx) {
+    let divElem = document.createElement("div");
+    let datePara = document.createElement("p");
+    datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/d/YYYY");
+    divElem.appendChild(datePara);
+    // TODO conditions (later)
+    let tempPara = document.createElement("p");
+    tempPara.textContent = 'Temp: ' + kelvinAsFahrenheit(resp.list[idx].main.temp) + "\u00B0 F";
+    divElem.appendChild(tempPara);
+    let windPara = document.createElement("p");
+    windPara.textContent = msAsMph('Wind: ' + resp.list[idx].wind.speel) + ' mph';
+    let humidPara = document.createElement("p");
+    humidPara.textContent = 'Humidity: ' + resp.list[idx].main.humidity + '%';
+    divElem.appendChild(humidPara);
+    nextDaysDiv.appendChild(divElem);
 }
 
 function geoUrlFromCity(city) {
@@ -177,67 +185,3 @@ function weatherUrlFromLatLon(lat,lon) {
     console.log('weather url = "' + urlEncoded + '"');
     return urlEncoded;
 }
-
-
-let testWeatherOutput = null;
-weatherFromCoords(39.97,-75.2);
-
-function weatherFromCoords (lat, lon) {
-    let url = weatherUrlFromLatLon(lat, lon);
-    return new Promise(function(resolve,reject) {
-        fetch(url)
-            .then(function(responseJson) {
-                console.log('weather resp raw = ' + responseJson);
-                console.log('type of wthr resp raw = ' + typeof responseJson);
-                return responseJson.json();
-            })
-            .then(function (respObj) {
-                console.log('weather resp obj = ' + respObj);
-                console.log('type of weather resp conv = ' + typeof respObj);
-                testWeatherOutput = respObj;
-                console.log('testWeatherOutput set');
-            }).catch(function(arg) {
-                console.log('weather catch arg = ' + arg);
-                console.log('weather catch clause');
-            })
-        }
-    );
-}
-
-// function testFormatWeather(resp) {
-//     let nextDaysDiv = document.querySelector("#next-days");
-//     if (resp === null) {
-//         console.log('resp is null');
-//     } else {
-//         let typ = typeof resp;
-//         console.log('type of response = ' + typ);
-//         if (typ !== 'object') {
-//             console.log('not an object');
-//         } else {
-//             console.log('is an object (good)');
-//             let i = 0;
-//             let count = 0;
-//             nextDaysDiv.innerHTML = '';  // reset content before appending children
-//             while (count < 5 && i < resp.list.length) {
-//                 let divElem = document.createElement("div");
-//                 let datePara = document.createElement("p");
-//                 datePara.textContent = dayjs.unix(resp.list[i].dt).format("YYYY-MM-DD[T]HH:mm");
-//                 divElem.appendChild(datePara);
-//                 // TODO conditions (later)
-//                 let degK = resp.list[i].main.temp;
-//                 let degC = degK-273.15;  // convert Kelvin to Celsius
-//                 let degF = degC*1.5+32;  // convert Celsius to Fahrenheit
-//                 degF = Math.floor(degF*10+0.5)/10;  // show 0.1 precision (might not work for < 0)
-//                 let tempPara = document.createElement("p");
-//                 tempPara.textContent = degF;
-//                 divElem.appendChild(tempPara);
-//                 let humidPara = document.createElement("p");
-//                 humidPara.textContent = resp.list[i].main.humidity + "%";
-//                 divElem.appendChild(humidPara);
-//                 nextDaysDiv.appendChild(divElem);
-//                 count++;
-//                 i += 8;
-//             }
-//         }
-//     }
-// }
