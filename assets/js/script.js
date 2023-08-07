@@ -30,6 +30,11 @@ function loadHistory() {
         histButton.textContent = weatherHistory[idx].city;
         cityList.appendChild(histButton);
     }
+    if (weatherHistory.length > 0) {
+        lookupCityAndDisplay(weatherHistory[0].city);
+    } else {
+        lookupCityAndDisplay('Cocoa Beach');
+    }
 }
 
 function kelvinAsFahrenheit(k) {
@@ -56,37 +61,41 @@ function handleCitySearch(event) {
         } else {
             console.log('search button click even trapped');
             let city = document.querySelector("#search-city").value;
-            if (city === null) {
-                console.log('null city detected');
-            } else {
-                console.log('initial city value = "' + city + '"');
-                city = city.trim();
-                console.log('trimmed city = "' + city + '" with length = ' + city.length);
-                if (city.length !== 0) {
-                    url = geoUrlFromCity(city);
-                    fetch(url)
-                        .then(function (response) {
-                            if (response.ok) {
-                                response.json().then(function (data) {
-                                    let cityName = data[0].name;
-                                    let lat = data[0].lat;
-                                    let lon = data[0].lon;
-                                    console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
-                                    getWeatherAndDisplay (cityName, lat, lon);
-                                    addHistButton(cityName, lat, lon);
-                                });
-                            } else {
-                                alert('Error: ' + response.statusText);
-                            }
-                        })
-                        .catch(function (error) {
-                            alert('Unable to connect to openweathermap for geo');
+            lookupCityAndDisplay(city);
+        }
+    }
+}
+
+function lookupCityAndDisplay(city) {
+    if (city === null) {
+        console.log('null city detected');
+    } else {
+        console.log('initial city value = "' + city + '"');
+        city = city.trim();
+        console.log('trimmed city = "' + city + '" with length = ' + city.length);
+        if (city.length !== 0) {
+            url = geoUrlFromCity(city);
+            fetch(url)
+                .then(function (response) {
+                    if (response.ok) {
+                        response.json().then(function (data) {
+                            let cityName = data[0].name;
+                            let lat = data[0].lat;
+                            let lon = data[0].lon;
+                            console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
+                            getWeatherAndDisplay (cityName, lat, lon);
+                            addHistButton(cityName, lat, lon);
                         });
-                } else {
-                    console.log('no search done on blank city');
-                    // TODO - need some kind of error response here
-                }
-            }
+                    } else {
+                        alert('Error: ' + response.statusText);
+                    }
+                })
+                .catch(function (error) {
+                    alert('Unable to connect to openweathermap for geo');
+                });
+        } else {
+            console.log('no search done on blank city');
+            // TODO - need some kind of error response here
         }
     }
 }
@@ -141,6 +150,7 @@ function handleHistSelect(event) {
                 }
                 console.log ('will get display for hist ' + city + ', ' + lat + ', ' + lon);
                 getWeatherAndDisplay (city, lat, lon);
+                document.querySelector("#search-city").value = '';
             }
         }
     }
