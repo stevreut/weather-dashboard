@@ -7,9 +7,11 @@ searchButton.addEventListener("click",handleCitySearch);
 
 let cityList = document.querySelector("#city-list");
 
-cityList.addEventListener("click",handleHistSelect);
+let todayForecast = document.querySelector("#today-forecast");
+let nextDaysDiv = document.querySelector("#next-days");
 
-// let resp;
+
+cityList.addEventListener("click",handleHistSelect);
 
 function handleCitySearch(event) {
     if (event === null) {
@@ -111,8 +113,24 @@ function displayWeatherInfo(resp) {
     if (resp.list.length < minCount) {
         minCount = resp.list.length;
     }
+    todayForecast.innerHTML = '';
+    h3Elem = document.createElement("h3");
+    h3Elem.textContent = 'CITY (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
+    todayForecast.appendChild(h3Elem);
+    let degK = resp.list[0].main.temp;
+    let degC = degK - 273.15;  // convert Kelvin to Celsius
+    let degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
+    degF = Math.floor(degF * 10 + 0.5) / 10;  // show 0.1 precision (might not work for < 0)
+    let todayTempPara = document.createElement("p");
+    todayTempPara.textContent = degF + "&deg; F";
+    todayForecast.appendChild(todayTempPara);
+    todayWind = document.createElement("p");
+    let wind = resp.list[0].wind.speed;
+    wind *= (3600/1609.344);  // convert to mph
+    wind = Math.floor(wind*10+0.5)/10;  // round to 0.1 mph precision
+    todayWind.textContent = wind;
+    todayForecast.appendChild(todayWind);
     console.log('min count = ' + minCount);
-    let nextDaysDiv = document.querySelector("#next-days");
     nextDaysDiv.innerHTML = '';  // reset content before appending children
     let count = 0;
     let i = 8;  // TODO
@@ -122,9 +140,9 @@ function displayWeatherInfo(resp) {
         datePara.textContent = dayjs.unix(resp.list[i].dt).format("YYYY-MM-DD[T]HH:mm");
         divElem.appendChild(datePara);
         // TODO conditions (later)
-        let degK = resp.list[i].main.temp;
-        let degC = degK - 273.15;  // convert Kelvin to Celsius
-        let degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
+        degK = resp.list[i].main.temp;
+        degC = degK - 273.15;  // convert Kelvin to Celsius
+        degF = degC * 1.8 + 32;  // convert Celsius to Fahrenheit
         degF = Math.floor(degF * 10 + 0.5) / 10;  // show 0.1 precision (might not work for < 0)
         let tempPara = document.createElement("p");
         tempPara.textContent = degF;
