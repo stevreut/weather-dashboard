@@ -8,6 +8,9 @@ header h1 {
     background-color: #38398a;
     color: white;
     text-align: center;
+    padding: 10px;
+    margin: 0px;
+    font-size: 18pt;
 }
 
 body {
@@ -21,6 +24,12 @@ main {
     justify-content: left;
 }
 
+h2 {
+    font-size: 14pt;
+    margin: 5px 0px 5px 0px;
+    font-weight: bolder;
+}
+
 main>div {
     padding: 5px;
 }
@@ -28,6 +37,11 @@ main>div {
 .search-box {
     display: flex;
     flex-direction: column;
+    border-style: solid;
+    border-color: #adadad;
+    border-width: 0px 0px 1px 0px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 #city-list {
@@ -87,6 +101,7 @@ button {
 }
 
 .card>img {
+    background-color: #343d4d;
     margin: 5px 0px 5px 0px;
 }
 
