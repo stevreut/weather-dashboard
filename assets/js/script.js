@@ -116,26 +116,30 @@ function getWeatherAndDisplay (city, lat, lon) {
     });
 }
 
+let testResp = null;
+
 function displayWeatherInfo(city, resp) {
+    testResp = resp;
     console.log('reported item count = ' + resp.cnt);
     console.log('actual item count = ' + resp.list.length);
     let minCount = resp.cnt;
     if (resp.list.length < minCount) {
         minCount = resp.list.length;
     }
-    todayForecast.innerHTML = '';
-    h3Elem = document.createElement("h3");
-    h3Elem.textContent = city + ' (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
-    todayForecast.appendChild(h3Elem);
-    let todayTempPara = document.createElement("p");
-    todayTempPara.textContent = 'Temp: ' + kelvinAsFahrenheit(resp.list[0].main.temp) + "\u00B0 F";
-    todayForecast.appendChild(todayTempPara);
-    todayWind = document.createElement("p");
-    todayWind.textContent = 'Wind: ' + msAsMph(resp.list[0].wind.speed) + " mph";
-    todayForecast.appendChild(todayWind);
-    todayHumidPara = document.createElement("p");
-    todayHumidPara.textContent = 'Humidity: ' + resp.list[0].main.humidity + '%';
-    todayForecast.appendChild(todayHumidPara);
+    // todayForecast.innerHTML = '';
+    document.querySelector("#city-date").textContent = 
+        city + ' (' + dayjs.unix(resp.list[0].dt).format("M/d/YYYY") + ')';
+    document.querySelector("#today-temp").textContent =
+        'Temp: ' + kelvinAsFahrenheit(resp.list[0].main.temp) + "\u00B0 F";
+    document.querySelector("#today-wind").textContent =
+        'Wind: ' + msAsMph(resp.list[0].wind.speed) + " mph";
+    document.querySelector("#today-humidity").textContent =
+        'Humidity: ' + resp.list[0].main.humidity + '%';
+    let img = document.querySelector("#today-icon");
+    let src = "https://openweathermap.org/img/wn/" + resp.list[0].weather[0].icon + ".png";
+    console.log('src = ' + src);
+    img.setAttribute("src",src);
+    img.setAttribute("alt",resp.list[0].weather[0].description);
     console.log('min count = ' + minCount);
     nextDaysDiv.innerHTML = '';  // reset content before appending children
     let count = 0;
@@ -152,12 +156,16 @@ function formatCard(resp, idx) {
     let datePara = document.createElement("p");
     datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/d/YYYY");
     divElem.appendChild(datePara);
-    // TODO conditions (later)
+    let img = document.createElement("img");
+    img.setAttribute("src","https://openweathermap.org/img/wn/" + resp.list[idx].weather[0].icon + ".png");
+    img.setAttribute("alt",resp.list[0].weather[0].description);
+    divElem.appendChild(img);
     let tempPara = document.createElement("p");
     tempPara.textContent = 'Temp: ' + kelvinAsFahrenheit(resp.list[idx].main.temp) + "\u00B0 F";
     divElem.appendChild(tempPara);
     let windPara = document.createElement("p");
-    windPara.textContent = msAsMph('Wind: ' + resp.list[idx].wind.speel) + ' mph';
+    windPara.textContent = 'Wind: ' + msAsMph(resp.list[idx].wind.speed) + ' mph';
+    divElem.appendChild(windPara);
     let humidPara = document.createElement("p");
     humidPara.textContent = 'Humidity: ' + resp.list[idx].main.humidity + '%';
     divElem.appendChild(humidPara);
