@@ -16,8 +16,8 @@
         <h1>Weather Dashboard</h1>
     </header>
     <main>
-        <div class="container"> <!-- left column -->
-            <div class="container"> <!-- Search box and related button -->
+        <div> <!-- left column -->
+            <div class="search-box""> <!-- Search box and related button -->
                 <h2>Search for a City:</h2> <!-- TODO - should this be a label instead? -->
                 <input type="text" id="search-city" /> <!-- TODO - leave sizing, etc. to CSS? -->
                 <button id="search-button">Search</button>
@@ -26,11 +26,11 @@
                 <!-- dynamically created city buttons here -->
             </div>
         </div>
-        <div class="container"> <!-- right column -->
+        <div> <!-- right column -->
             <!-- TODO - Consideration of INITIAL page presentation is needed, for before any
                 weather info has been displayed -->
-            <div id="today-forecast" class="container">
-                <h3 id="city-date">No City Selected</h3>
+            <div id="today-forecast">
+                <h2 id="city-date">No City Selected</h2>
                 <img id="today-icon" src="https://openweathermap.org/img/wn/01n.png" alt="unknown weather">
                 <p id="today-temp"></p>
                 <p id="today-wind"></p>
