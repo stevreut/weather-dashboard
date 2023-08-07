@@ -5,7 +5,8 @@
 }
 
 header h1 {
-    background-color: #38398a;
+    background-color: #38398a; /* For browsers that do not support gradients */
+    background-image: linear-gradient(to right, #4a59b2 , #23145c);
     color: white;
     text-align: center;
     padding: 10px;
