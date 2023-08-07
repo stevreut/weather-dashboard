@@ -5,29 +5,7 @@ let searchButton = document.querySelector("#search-button");
 
 searchButton.addEventListener("click",handleCitySearch);
 
-let resp;
-
-//testResponse();  // TODO - temporary
-
-
-// function testResponse() {  // TODO - temporary
-//     resp = JSON.parse(respJson);
-//     let cnt = resp.cnt;
-//     if (cnt < 1) {
-//         return;
-//     }
-//     console.log('count = ' + cnt);
-//     console.log('arr len = ' + resp.list.length);
-//     for (let i=0;i<cnt;i++) {
-//         let txt = 'dt/time = ' + resp.list[i].dt_txt + ' : ';
-//         let k = resp.list[i].main.temp;
-//         let c = k-273.15;
-//         let f = c*9.0/5+32;
-//         f = Math.floor(f+0.5);
-//         txt += (f + ' deg F');
-//         console.log(i + ' : ' + txt);
-//     }
-// }
+// let resp;
 
 function handleCitySearch(event) {
     if (event === null) {
@@ -46,14 +24,6 @@ function handleCitySearch(event) {
                 console.log('initial city value = "' + city + '"');
                 city = city.trim();
                 console.log('trimmed city = "' + city + '" with length = ' + city.length);
-                // TODO - temp - pending refinement, call testFormatWeather() just to demo display
-                // testFormatWeather(JSON.parse(respJson)); // TODO
-                // let cityData = cityDataFromAPI(city);
-                // if (cityData === null) {
-                //     console.log('null returned from geo');
-                // } else {
-                //     console.log('city returned from geo = ' + cityData);
-                // }
                 if (city.length !== 0) {
                     cityDataFromAPI(city)
                     .then(function(cityData) {
@@ -73,15 +43,9 @@ function handleCitySearch(event) {
 }
 
 function cityDataFromAPI(cityName) {
-    // returns promise containing:
-    //  {name: name, lat: <north latitude, lon: <east longitude>}
-    //    or
-    //  null  ??
-    //--
-    // Construct URL
     let url = geoUrlFromCity(cityName);
     return new Promise(function(resolve,reject) {
-        fetch(urlEncoded)
+        fetch(url)
             .then(function(responseJson) {
                 console.log('geo resp raw = ' + responseJson);
                 console.log('type of geo resp raw = ' + typeof responseJson);
