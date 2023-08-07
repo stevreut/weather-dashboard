@@ -53,68 +53,45 @@ function msAsMph(ms) {
 }
 
 function handleCitySearch(event) {
-    if (event === null) {
-        console.log('click event was null');
-    } else {
-        console.log('click on button search button');
+    if (event !== null) {
         let elem = event.target;
         removeWarnings();
-        if (!elem.matches("button") || !elem.matches("#search-button")) {
-            console.log('bad match on search button event');
-        } else {
-            console.log('search button click even trapped');
+        if (elem.matches("#search-button")) {
             let city = searchCity.value;
             lookupCityAndDisplay(city);
         }
     }
 }
 
-let tempASDF = null;
-
 function lookupCityAndDisplay(city) {
-    if (city === null) {
-        console.log('null city detected');
-    } else {
-        console.log('initial city value = "' + city + '"');
+    if (city !== null) {
         city = city.trim();
-        console.log('trimmed city = "' + city + '" with length = ' + city.length);
         if (city.length !== 0) {
             url = geoUrlFromCity(city);
             fetch(url)
                 .then(function (response) {
                     if (response.ok) {
-                        response.json().then(function (data) {
-                            if (data === null) {
-                                console.log('asdf data is null');
-                            } else if (typeof data === 'undefined') {
-                                console.log('asdf data is undefined');
-                            } else {
-                                console.log('asdf type of data = ' + typeof data);
-                                let asdfvar = JSON.stringify(data);
-                                console.log('asdf data json\'ed = ' + asdfvar);
-                                console.log('asdf data ' + data);
-                                tempASDF = data;
-                                console.log('asdf data len = ' + data.length);
-                            }
-                            if (data.length > 0) {
-                                let cityName = data[0].name;
-                                let lat = data[0].lat;
-                                let lon = data[0].lon;
-                                console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
-                                getWeatherAndDisplay (cityName, lat, lon);
-                                addHistButton(cityName, lat, lon);
-                            } else {
-                                let cityH2 = document.querySelector("#city-date");
-                                cityH2.textContent = "No information found for " + city;
-                                cityH2.setAttribute("class","warning-alert");
-                                cityH2.parentElement.setAttribute("class","warning-alert");
-                                document.querySelector("#today-icon").style.visibility = 'hidden';
-                                document.querySelector("#today-temp").style.visibility = 'hidden';
-                                document.querySelector("#today-wind").style.visibility = 'hidden';
-                                document.querySelector("#today-humidity").style.visibility = 'hidden';
-                                nextDaysDiv.innerHTML = '';
-                                searchCity.value = '';
-                            }
+                        response.json()
+                .then(function (data) {
+                    if (data.length > 0) {
+                        let cityName = data[0].name;
+                        let lat = data[0].lat;
+                        let lon = data[0].lon;
+                        console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
+                        getWeatherAndDisplay (cityName, lat, lon);
+                        addHistButton(cityName, lat, lon);
+                    } else {
+                        let cityH2 = document.querySelector("#city-date");
+                        cityH2.textContent = "No information found for " + city;
+                        cityH2.setAttribute("class","warning-alert");
+                        cityH2.parentElement.setAttribute("class","warning-alert");
+                        document.querySelector("#today-icon").style.visibility = 'hidden';
+                        document.querySelector("#today-temp").style.visibility = 'hidden';
+                        document.querySelector("#today-wind").style.visibility = 'hidden';
+                        document.querySelector("#today-humidity").style.visibility = 'hidden';
+                        nextDaysDiv.innerHTML = '';
+                        searchCity.value = '';
+                    }
                         });
                     } else {
                         alert('Error: ' + response.statusText);
@@ -123,9 +100,6 @@ function lookupCityAndDisplay(city) {
                 .catch(function (error) {
                     alert('Unable to connect to openweathermap for geo');
                 });
-        } else {
-            console.log('no search done on blank city');
-            // TODO - need some kind of error response here
         }
     }
 }
