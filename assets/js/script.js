@@ -25,14 +25,24 @@ function handleCitySearch(event) {
                 city = city.trim();
                 console.log('trimmed city = "' + city + '" with length = ' + city.length);
                 if (city.length !== 0) {
-                    cityDataFromAPI(city)
-                    .then(function(cityData) {
-                        console.log('city data after API return = ' + cityData);
-                    })
-                    .catch(function(arg) {
-                        console.log('caught something here');
-                        console.log('caught arg = ' + arg);
-                    });
+                    url = geoUrlFromCity(city);
+                    fetch(url)
+                        .then(function (response) {
+                            if (response.ok) {
+                                response.json().then(function (data) {
+                                    let cityName = data[0].name;
+                                    let lat = data[0].lat;
+                                    let lon = data[0].lon;
+                                    console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
+                                    getWeatherAndDisplay (cityName, lat, lon);
+                                });
+                            } else {
+                                alert('Error: ' + response.statusText);
+                            }
+                        })
+                        .catch(function (error) {
+                            alert('Unable to connect to openweathermap for geo');
+                        });
                 } else {
                     console.log('no search done on blank city');
                     // TODO - need some kind of error response here
@@ -42,30 +52,54 @@ function handleCitySearch(event) {
     }
 }
 
-function cityDataFromAPI(cityName) {
-    let url = geoUrlFromCity(cityName);
-    return new Promise(function(resolve,reject) {
-        fetch(url)
-            .then(function(responseJson) {
-                console.log('geo resp raw = ' + responseJson);
-                console.log('type of geo resp raw = ' + typeof responseJson);
-                return responseJson.json();
-            })
-            .then(function (respObj) {
-                console.log('geo resp obj = ' + respObj);
-                console.log('type of geo resp conv = ' + typeof respObj);
-                let lat = respObj[0].lat;
-                let lon = respObj[0].lon;
-                let name = respObj[0].name;
-                console.log('name/lat/lon = ' + name + ', ' + lat + ', ' + lon);
-                return {name: name, lat: lat, lon: lon};
-            }).catch(function(arg) {
-                console.log('geo catch arg = ' + arg);
-                console.log('geo catch clause');
-            })
+function getWeatherAndDisplay (city, lat, lon) {
+    let url = weatherUrlFromLatLon (lat, lon);
+    fetch(url)
+    .then(function (response) {
+        if (response.ok) {
+            response.json().then(function (data) {
+                console.log('weather received : ' + JSON.stringify(data));
+                displayWeatherInfo(data);
+            });
+        } else {
+            alert('Error: ' + response.statusText);
         }
-    );
+    })
+    .catch(function (error) {
+        alert('Unable to connect to openweathermap for weather');
+    });
 }
+
+function displayWeatherInfo(weatherResponse) {
+    console.log('reported item count = ' + weatherResponse.cnt);
+    console.log('actual item count = ' + weatherResponse.list.length);
+
+}
+
+// function cityDataFromAPI(cityName) {
+//     let url = geoUrlFromCity(cityName);
+//     return new Promise(function(resolve,reject) {
+//         fetch(url)
+//             .then(function(responseJson) {
+//                 console.log('geo resp raw = ' + responseJson);
+//                 console.log('type of geo resp raw = ' + typeof responseJson);
+//                 return responseJson.json();
+//             })
+//             .then(function (respObj) {
+//                 console.log('geo resp obj = ' + respObj);
+//                 console.log('type of geo resp conv = ' + typeof respObj);
+//                 let lat = respObj[0].lat;
+//                 let lon = respObj[0].lon;
+//                 let name = respObj[0].name;
+//                 console.log('name/lat/lon = ' + name + ', ' + lat + ', ' + lon);
+//                 return {name: name, lat: lat, lon: lon};
+//             }).catch(function(arg) {
+//                 console.log('geo catch arg = ' + arg);
+//                 console.log('geo catch clause');
+//             })
+//         }
+//     );
+// }
 
 function geoUrlFromCity(city) {
     let BASE_URL = 'http://api.openweathermap.org/';
