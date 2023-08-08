@@ -40,6 +40,7 @@ main>div {
     padding: 5px;
 }
 
+/* Container for search input field and corresponding button */
 .search-box {
     display: flex;
     flex-direction: column;
@@ -48,22 +49,6 @@ main>div {
     border-width: 0px 0px 1px 0px;
     padding-bottom: 5px;
     margin-bottom: 5px;
-}
-
-#city-list {
-    display: flex;
-    flex-direction: column;
-}
-
-input {
-    color: #888;
-    padding: 6px;
-    /* font-size: 15pt; */
-    margin: 5px;
-    border-style: solid;
-    border-radius: 5px;
-    border-color: black;
-    border-width: 1px;
 }
 
 button {
@@ -79,6 +64,23 @@ button {
     color: #e2e2e2;
 }
 
+input {
+    color: #888;
+    padding: 6px;
+    margin: 5px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: black;
+    border-width: 1px;
+}
+
+/* Column of city history buttons */
+#city-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container for current date forecast info */
 #today-forecast {
     width: 100%;
     border-style: solid;
@@ -87,17 +89,21 @@ button {
     padding: 5px;
 }
 
+/* Used to TEMPORARILY emphasize the information in the #today-forecast 
+   container - for alerts */
 .warning-alert {
     background-color: #ffde21;
     font-size: 24pt;
 }
 
+/* Container for 5-day forecast */
 #next-days {
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
+/* Class used by each of the up to five forecast cards */
 .card {
     background-color: var(--slate-blue);
     color: white;
@@ -112,10 +118,14 @@ button {
 }
 
 .card>img {
+    /* Background color must match that of surrounding
+       container so that the transparency of the PNG images 
+       works to its best effect. */
     background-color: var(--slate-blue);
     margin: 5px 0px 5px 0px;
 }
 
+/* Make responsive for mobile devices */
 @media screen and (max-width: 768px) {
     main {
         flex-direction: column;
