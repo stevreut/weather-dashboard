@@ -220,7 +220,7 @@ function removeWarnings() {
 }
 
 function getWeatherAndDisplay (city, lat, lon) {
-    // Use latitute and longitude to form the correct API
+    // Use latitude and longitude to form the correct API
     // for the fetch, then populate page of fetch is successful.
     let url = weatherUrlFromLatLon (lat, lon);
     fetch(url)
