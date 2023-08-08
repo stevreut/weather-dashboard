@@ -298,7 +298,7 @@ function formatCard(resp, idx) {
 }
 
 function geoUrlFromCity(city) {
-    let BASE_URL = 'http://api.openweathermap.org/';
+    let BASE_URL = 'https://api.openweathermap.org/';
     let GEO_API_BRANCH = 'geo/1.0/direct';
     let url = BASE_URL + GEO_API_BRANCH + "?" +
         "q=" + city + "&limit=1" +
@@ -308,7 +308,7 @@ function geoUrlFromCity(city) {
 }
 
 function weatherUrlFromLatLon(lat,lon) {
-    let BASE_URL = 'http://api.openweathermap.org/';
+    let BASE_URL = 'https://api.openweathermap.org/';
     let GEO_API_BRANCH = 'data/2.5/forecast';
     let url = BASE_URL + GEO_API_BRANCH + "?" +
         "lat=" + lat + "&lon=" + lon + 
