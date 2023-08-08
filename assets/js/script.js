@@ -17,13 +17,20 @@ let weatherHistory = [];
 loadHistory();
 
 function loadHistory() {
+    // Get saved cities (and associated coordinates) from localStorage
+    // and use that data to rebuild the weatherHistory array and the
+    // column of buttons for the same, as these two mirror each other.
     weatherHistory = localStorage.getItem("weather-db-hist");
     if (weatherHistory === null) {
+        // If no localStorage then start with a blank link
         weatherHistory = [];
     } else {
         weatherHistory = JSON.parse(weatherHistory);
     }
-    cityList.innerHTML = '';
+    cityList.innerHTML = '';  // Clear any pre-existing history button content
+    // Build the buttons, including lat= and lon= attributes which can 
+    // be passed to the weather API without the need to re-query the 
+    // geocode API.
     for (let idx=0;idx<weatherHistory.length;idx++) {
         let histButton = document.createElement("button");
         histButton.setAttribute("class","hist-button");
@@ -32,6 +39,12 @@ function loadHistory() {
         histButton.textContent = weatherHistory[idx].city;
         cityList.appendChild(histButton);
     }
+    // If this list is populated then use the first city on the list
+    // to do a weather look-up for purpose of initially populating the page.
+    //
+    // If there are currently no buttons then arbitrary add one for 
+    // Cocoa Beach (HSH) and look-up the weather for the same - again for
+    // the purpose of populating the page on the initial load.
     if (weatherHistory.length > 0) {
         lookupCityAndDisplay(weatherHistory[0].city);
     } else {
@@ -40,6 +53,9 @@ function loadHistory() {
 }
 
 function kelvinAsFahrenheit(k) {
+    // Converts a NUMERIC Kelvin temperature
+    // to a STRING Fahrenheit, rounded to one figure
+    // after the decimal point.
     let c = k-273.15;
     let f = c*1.8+32;
     f = Math.floor(f*10+0.5)/10;
@@ -47,16 +63,26 @@ function kelvinAsFahrenheit(k) {
 }
 
 function msAsMph(ms) {
+    // Concerts a NUMERIC velocity in metres per second to
+    // a STRING velocity in mph, rounded to one figure
+    // after the decimal point.
     let mph = ms*3600/1609.344;
     mph = Math.floor(mph*10+0.5)/10;
     return mph.toFixed(1);
 }
 
 function handleCitySearch(event) {
+    // This is the listener associated with clicking the 
+    // "Search" button.
     if (event !== null) {
         let elem = event.target;
+        // Remove any temporary warning content that might have been
+        // temporarily placed in the same-day forecast box.
         removeWarnings();
+        // Confirm event matches a click of the desired button.
         if (elem.matches("#search-button")) {
+            // Attempt to do the multiple look-ups and, if
+            // successful, populate the page with data therefrom.
             let city = searchCity.value;
             lookupCityAndDisplay(city);
         }
@@ -64,6 +90,11 @@ function handleCitySearch(event) {
 }
 
 function lookupCityAndDisplay(city) {
+    // After verifying that the the city parameter is non-null
+    // and not empty, use the same to get latitude and longitude from
+    // the appropriate API.  If that succeeds then look-up weather
+    // from another API and, if successful, populate today's and the
+    // next five days' weather info on the page.
     if (city !== null) {
         city = city.trim();
         if (city.length !== 0) {
@@ -71,6 +102,8 @@ function lookupCityAndDisplay(city) {
             fetch(url)
                 .then(function (response) {
                     if (response.ok) {
+                        // asynchronous conversion of response object to 
+                        // response CONTENT object
                         response.json()
                 .then(function (data) {
                     if (data.length > 0) {
@@ -81,6 +114,13 @@ function lookupCityAndDisplay(city) {
                         getWeatherAndDisplay (cityName, lat, lon);
                         addHistButton(cityName, lat, lon);
                     } else {
+                        // A "valid" response from the geo API can still be an empty array,
+                        // indicating that no matching cities were found.  This is not a "trap" but
+                        // needs to be handled as a 'not found' scenario.  To do so, we repurpose the
+                        // <div> that normally contains today's weather but, in this case, we apply 
+                        // brighter colors by swapping in the "warning-alert" class, then put
+                        // warning information in the H2 content and hide the other children (temperature,
+                        // etc.)
                         let cityH2 = document.querySelector("#city-date");
                         cityH2.textContent = "No information found for " + city;
                         cityH2.setAttribute("class","warning-alert");
@@ -89,6 +129,7 @@ function lookupCityAndDisplay(city) {
                         document.querySelector("#today-temp").style.visibility = 'hidden';
                         document.querySelector("#today-wind").style.visibility = 'hidden';
                         document.querySelector("#today-humidity").style.visibility = 'hidden';
+                        // Also remove the 5-day forecast
                         nextDaysDiv.innerHTML = '';
                         searchCity.value = '';
                     }
@@ -105,20 +146,31 @@ function lookupCityAndDisplay(city) {
 }
 
 function addHistButton(city, lat, lon) {
-    console.log('adding button for ' + city + ', ' + lat + ', ' + lon);
+    // Adds a new history button to the column AND the associated 
+    // weatherHistory array based on the parameters, then persists
+    // the modified weatherHistory array to localStorage.
     let matchFound = false;
     let matchIdx = -1;
+    // First scan the weatherHistory for any elements of the array
+    // that match the city in the parameter and, if found, note the
+    // index where that match was found.
     for (let i=0;i<weatherHistory.length;i++) {
         if (city === weatherHistory[i].city) {
             matchFound = true;
-            matchIdx = idx;
+            matchIdx = i;
         }
     }
     if (matchFound) {
+        // If a match was found then we first remove that match from the array
         weatherHistory = weatherHistory.splice(matchIdx, 1);
     }
+    // Now, whether matched or now, we insert the new button at the top of the
+    // array, and then store the array in its entirety.
     weatherHistory.unshift({city: city, lat: lat, lon: lon})
     localStorage.setItem("weather-db-hist", JSON.stringify(weatherHistory));
+    // Now we completely rebuild the button column from the weatherHistory, 
+    // thereby insuring that weatherHistory, its localStorage incarnation, and
+    // the column of buttons are all three in-synch.
     cityList.innerHTML = '';
     for (let idx=0;idx<weatherHistory.length;idx++) {
         let histButton = document.createElement("button");
@@ -131,29 +183,25 @@ function addHistButton(city, lat, lon) {
 }
 
 function handleHistSelect(event) {
-    if (event === null) {
-        console.log('hist click event was null');
-    } else {
-        console.log('click on hist list');
+    // Event listener for clicking of city history buttons.  This
+    // uses event delegation and, therefore, an event need not
+    // necessarily be the clocking of a button, thus we check
+    // that it matches ".hist-button" before processing.
+    if (event !== null) {
         let elem = event.target;
-        if (!elem.matches(".hist-button")) {
-            console.log('bad match on hist button event');
-        } else {
-            console.log('hist button click even trapped');
+        if (elem.matches(".hist-button")) {
+            // Remove any warning content that may have been 
+            // previously placed in the current day forecast
+            // box.
             removeWarnings();
             let city = elem.textContent;
-            console.log('hist button city = ' + city);
-            if (city !== null) {
-                console.log('null hist city detected');
+            if (city !== null && city.length > 0) {
                 let lat = elem.getAttribute("lat");
                 let lon = elem.getAttribute("lon");
-                console.log('hist button coords = ' + lat + ', ' + lon);
                 lat = parseFloat(lat);
                 lon = parseFloat(lon);
-                if (lat === null || lon === null) {
-                    console.log ('null coords on hist button ' + city);
-                }
-                console.log ('will get display for hist ' + city + ', ' + lat + ', ' + lon);
+                // Use city, latitude and longitude to look-up weather and
+                // then populate page content.
                 getWeatherAndDisplay (city, lat, lon);
             }
             searchCity.value = '';
@@ -163,6 +211,8 @@ function handleHistSelect(event) {
 }
 
 function removeWarnings() {
+    // Clears any warning content that may have been left in the current day
+    // forecast box.
     let cityH2 = document.querySelector("#city-date");
     cityH2.classList.remove("warning-alert");
     cityH2.parentElement.classList.remove("warning-alert");
@@ -173,12 +223,13 @@ function removeWarnings() {
 }
 
 function getWeatherAndDisplay (city, lat, lon) {
+    // Use latitute and longitude to form the correct API
+    // for the fetch, then populate page of fetch is successful.
     let url = weatherUrlFromLatLon (lat, lon);
     fetch(url)
     .then(function (response) {
         if (response.ok) {
             response.json().then(function (data) {
-                console.log('weather received : ' + JSON.stringify(data));
                 displayWeatherInfo(city, data);
             });
         } else {
@@ -190,18 +241,16 @@ function getWeatherAndDisplay (city, lat, lon) {
     });
 }
 
-let testResp = null;
-
 function displayWeatherInfo(city, resp) {
-    testResp = resp;
-    console.log('reported item count = ' + resp.cnt);
-    console.log('actual item count = ' + resp.list.length);
+    // Populate page content based on response from the weather API as well
+    // as the city name passed as a parameter.
     let minCount = resp.cnt;
     if (resp.list.length < minCount) {
         minCount = resp.list.length;
     }
-    // todayForecast.innerHTML = '';
+    // First populate the box for TODAY'S weather (info from resp.list[0]):
     document.querySelector("#city-date").textContent = 
+        // Note dt is unix epoch and must be converted.
         city + ' (' + dayjs.unix(resp.list[0].dt).format("M/D/YYYY") + ')';
     document.querySelector("#today-temp").textContent =
         'Temp: ' + kelvinAsFahrenheit(resp.list[0].main.temp) + "\u00B0 F";
@@ -211,13 +260,14 @@ function displayWeatherInfo(city, resp) {
         'Humidity: ' + resp.list[0].main.humidity + '%';
     let img = document.querySelector("#today-icon");
     let src = "https://openweathermap.org/img/wn/" + resp.list[0].weather[0].icon + ".png";
-    console.log('src = ' + src);
     img.setAttribute("src",src);
     img.setAttribute("alt",resp.list[0].weather[0].description);
-    console.log('min count = ' + minCount);
     nextDaysDiv.innerHTML = '';  // reset content before appending children
+    // Populate the 5-day forecast cards, assuming that at least 40 elements occur in the
+    // resp.list[] array.  If less than 40 then we still move forward by incrementing the 
+    // index in increments of 8 (3 hrs ea = 24 hours) creating UP TO five cards.
     let count = 0;
-    let i = 7;  // TODO
+    let i = 7;
     while (count < 5 && i < minCount) {
         formatCard(resp, i);
         i += 8;
@@ -226,11 +276,12 @@ function displayWeatherInfo(city, resp) {
 }
 
 function formatCard(resp, idx) {
+    // Formats a single weather card for the day whose information is provided
+    // in resp.list[idx].  This is done through dynamic creation of the
+    // card (<div>) corresponding to that forecast.
     let divElem = document.createElement("div");
     divElem.setAttribute("class","card");
     let datePara = document.createElement("p");
-    console.log('unix = ' + resp.list[idx].dt);
-    console.log('txt of unix = ' + dayjs.unix(resp.list[idx].dt).format('M/D/YYYY'));
     datePara.textContent = dayjs.unix(resp.list[idx].dt).format("M/D/YYYY");
     divElem.appendChild(datePara);
     let img = document.createElement("img");
@@ -253,10 +304,9 @@ function geoUrlFromCity(city) {
     let BASE_URL = 'http://api.openweathermap.org/';
     let GEO_API_BRANCH = 'geo/1.0/direct';
     let url = BASE_URL + GEO_API_BRANCH + "?" +
-        "q=" + city /* TODO */ + "&limit=1" +
+        "q=" + city + "&limit=1" +
         "&appid=" + OPENWEATHER_API_KEY;
     let urlEncoded = encodeURI(url);
-    console.log('geo url = "' + urlEncoded + '"');
     return urlEncoded;
 }
 
@@ -267,6 +317,5 @@ function weatherUrlFromLatLon(lat,lon) {
         "lat=" + lat + "&lon=" + lon + 
         "&appid=" + OPENWEATHER_API_KEY;
     let urlEncoded = encodeURI(url);
-    console.log('weather url = "' + urlEncoded + '"');
     return urlEncoded;
 }
