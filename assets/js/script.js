@@ -27,18 +27,10 @@ function loadHistory() {
     } else {
         weatherHistory = JSON.parse(weatherHistory);
     }
-    cityList.innerHTML = '';  // Clear any pre-existing history button content
     // Build the buttons, including lat= and lon= attributes which can 
     // be passed to the weather API without the need to re-query the 
     // geocode API.
-    for (let idx=0;idx<weatherHistory.length;idx++) {
-        let histButton = document.createElement("button");
-        histButton.setAttribute("class","hist-button");
-        histButton.setAttribute("lat",weatherHistory[idx].lat);
-        histButton.setAttribute("lon",weatherHistory[idx].lon);
-        histButton.textContent = weatherHistory[idx].city;
-        cityList.appendChild(histButton);
-    }
+    buildHistoryFromWeatherHistory();
     // If this list is populated then use the first city on the list
     // to do a weather look-up for purpose of initially populating the page.
     //
@@ -110,9 +102,9 @@ function lookupCityAndDisplay(city) {
                         let cityName = data[0].name;
                         let lat = data[0].lat;
                         let lon = data[0].lon;
-                        console.log('name/lat/lon = ' + cityName + ' / ' + lat + ' / ' + lon);
                         getWeatherAndDisplay (cityName, lat, lon);
                         addHistButton(cityName, lat, lon);
+                        searchCity.value = '';
                     } else {
                         // A "valid" response from the geo API can still be an empty array,
                         // indicating that no matching cities were found.  This is not a "trap" but
@@ -162,7 +154,8 @@ function addHistButton(city, lat, lon) {
     }
     if (matchFound) {
         // If a match was found then we first remove that match from the array
-        weatherHistory = weatherHistory.splice(matchIdx, 1);
+        // weatherHistory = weatherHistory.splice(matchIdx, 1);
+        weatherHistory.splice(matchIdx, 1);
     }
     // Now, whether matched or now, we insert the new button at the top of the
     // array, and then store the array in its entirety.
@@ -171,7 +164,11 @@ function addHistButton(city, lat, lon) {
     // Now we completely rebuild the button column from the weatherHistory, 
     // thereby insuring that weatherHistory, its localStorage incarnation, and
     // the column of buttons are all three in-synch.
-    cityList.innerHTML = '';
+    buildHistoryFromWeatherHistory();
+}
+
+function buildHistoryFromWeatherHistory() {
+    cityList.innerHTML = '';  // Clear any pre-existing history button content
     for (let idx=0;idx<weatherHistory.length;idx++) {
         let histButton = document.createElement("button");
         histButton.setAttribute("class","hist-button");
