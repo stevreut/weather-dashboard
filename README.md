@@ -61,9 +61,10 @@ The result of this project is a web site accessible via web browser at [stevreut
 Resulting web presentation should resemble the following:
 
 ![initial state](./assets/images/screenshot1.png)
-![after 1 unsaved entry](./assets/images/screenshot2.png)
-![after 2 unsaved entries](./assets/images/screenshot3.png)
-![after saving 1 of 2 entries](./assets/images/screenshot4.png)
+![city search](./assets/images/screenshot2.png)
+![after city search](./assets/images/screenshot3.png)
+![after second city search](./assets/images/screenshot4.png)
+![mobile-friendly format](./assets/images/screenshot5.png)
 
 ## Credits
 
