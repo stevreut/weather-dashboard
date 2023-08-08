@@ -2,8 +2,9 @@
 
 ## Description
 
-A project whose goal is to create a javascript-driven calendar / task tracker for a
-single work day.
+A web page deployment that enables users to inquire on the 5-day weather forecast for a specified city, add that city to a list of favorites and use that same list for future
+weather look-ups - implemented by calling two APIs made 
+available by OpenWeatherMap.
 
 - Key features of the resulting HTML/CSS/Javascript site are:
     - Use of two APIs made available by [openweathermap.org](https://openweathermap.org/),
